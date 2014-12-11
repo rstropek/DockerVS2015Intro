@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # ============================================================
 #  Creates a demo environment for playing with Docker and
