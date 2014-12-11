@@ -5,6 +5,7 @@ printf "[global]\nworkgroup = DOCKERSAMPLE\nsecurity = user\nmap to guest = Bad 
  | tee /etc/samba/smb.conf
 mkdir -p /app/src
 chown nobody.nogroup /app/src/
+chmod a+w /app/src
 restart smbd
 restart nmbd
 
