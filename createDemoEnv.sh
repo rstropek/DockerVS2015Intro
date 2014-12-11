@@ -48,8 +48,8 @@ echo "  Create a Linux VM $linuxclientname"
 echo "  Create a Docker Host VM $dockerhostname"
 echo "  Create a VS2015 VM $vsname"
 echo ""
-echo "Press enter to continue or stop script now ..."
-read confirm
+echo "Press any key to continue or stop script now ..."
+read -n 1 -s
 
 # Define Azure affinity group
 azure account affinity-group create --location "$region" --label "$prefix" "$affinitygroupname"
@@ -85,8 +85,8 @@ azure vm create --rdp --virtual-network-name "$vnetname" \
 
 # Wait until VMs came up
 echo ""
-echo "Please check Azure portal and press enter when all VMs are up and running"
-read confirmRunning
+echo "Please check Azure portal and press any key to continue when all VMs are up and running"
+read -n 1 -s
 
 # Configure Docker host
 ssh -i ${sshkey}.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
