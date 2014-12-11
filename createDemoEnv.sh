@@ -9,9 +9,9 @@
 #                 http://www.timecockpit.com
 # ============================================================
 
-vnetName = "$1"
+vnetname = "$1"
 
-if [ "$vnetName" == "" ]; then
-	echo "USAGE: createDemoEnv.sh vnetName"
+if [ "$vnetname" == "" ]; then
+	echo "USAGE: createDemoEnv.sh vnetname"
 	exit 1
 fi
