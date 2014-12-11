@@ -15,8 +15,9 @@
 # can be found at http://azure.microsoft.com/en-us/documentation/articles/xplat-cli/
 
 # Note that there has been a bug in Azure XPlat tools at the 
-# time of writing this sample. You have to have at least one VNet
-# (can be a dummy vnet). Otherwise creating a new VNet does not work.
+# time of writing this sample. You have to have AT LEAST ONE VNet
+# (can be a dummy vnet). Otherwise creating a new VNet via Azure
+# XPlat tools does not work :-(
 
 prefix="dockersample"
 vnetname="${prefix}net"
@@ -37,16 +38,21 @@ vsimage="03f55de797f546a1b29d1b8d66be687a__Visual-Studio-2015-Ultimate-Preview-1
 echo ""
 echo "WARNING! This script will create a demo environment in Azure for you"
 echo "  You HAVE TO MAKE SURE that you have selected an appropriate Azure"
-echo "  account using 'azure account ...' before running this script."
+echo "  account before running this script. If you are not sure, read"
+echo "  http://azure.microsoft.com/en-us/documentation/articles/xplat-cli/"
+echo "  before continuing."
 echo ""
 echo "This script will perform the following actions:"
-echo "  Create an affinity group $affinitygroupname"
-echo "  Create a storage account $storagename"
-echo "  Create an SSH key file for passwordless SSH"
-echo "  Create a vnet $vnetname"
-echo "  Create a Linux VM $linuxclientname"
-echo "  Create a Docker Host VM $dockerhostname"
-echo "  Create a VS2015 VM $vsname"
+echo "  - Create an affinity group '$affinitygroupname'"
+echo "    (all resources will be assigned to it)"
+echo "  - Create a storage account '$storagename'"
+echo "  - Create an SSH key file for passwordless SSH"
+echo "  - Create a vnet '$vnetname'"
+echo "    (all VMs will be assigned to it)"
+echo "  - Create a Linux VM '$linuxclientname'"
+echo "  - Create a Docker Host VM '$dockerhostname'"
+echo "    (will also contain a Samba share for file exchange)"
+echo "  - Create a VS2015 VM '$vsname'"
 echo ""
 echo "Press any key to continue or stop script now ..."
 read -n 1 -s
@@ -88,10 +94,17 @@ echo ""
 echo "Please check Azure portal and press any key to continue when all VMs are up and running"
 read -n 1 -s
 
-# Configure Docker host
+# Configure Linux client
 ssh -i ${sshkey}.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
 ${username}@${linuxclientname}.cloudapp.net "sudo sh" < configureLinuxClient.sh
 
+# Configure Docker host
 ssh -i ${sshkey}.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
 ${username}@${dockerhostname}.cloudapp.net "sudo sh" < configureDockerHost.sh
 
+# Copy Docker certificates
+scp -i sshkey.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r \
+~/.docker dockersample@dockersamplelinuxclient.cloudapp.net:~/.docker
+
+scp -i sshkey.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r \
+~/.docker dockersample@dockersamplehost.cloudapp.net:/app/src/.docker
