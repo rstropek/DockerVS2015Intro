@@ -8,7 +8,7 @@ environment in Azure.
 
 ## Demo environment
 
-The script [createDemoEnv.sh](blob/master/createDemoEnv.sh) creates three
+The script [createDemoEnv.sh](createDemoEnv.sh) creates three
 virtual machines in a separate vnet in Microsoft Azure:
 
 * Docker Host
@@ -40,8 +40,8 @@ You will probably need to adapt the name constants at the beginning of the file 
 names might already be taken.
 
 Once the script is completed, you can use the helper scripts 
-[openLinuxClientShell.sh](blob/master/openLinuxClientShell.sh) and
-[openDockerHostShell.sh](blob/master/openDockerHostShell.sh) to open a remote shell
+[openLinuxClientShell.sh](openLinuxClientShell.sh) and
+[openDockerHostShell.sh](openDockerHostShell.sh) to open a remote shell
 on the Linux machines.
 
 To check if everything worked well, connect to the Linux client machine and try
