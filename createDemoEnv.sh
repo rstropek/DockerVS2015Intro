@@ -24,9 +24,32 @@ affinitygroupname="${prefix}ag"
 region="North Europe"
 storagename="${prefix}vmstorage"
 linuxclientname="${prefix}linuxclient"
+dockerhostname="${prefix}host"
+vsname="${prefix}vs"
 username="dockersample"
 password="P@ssw0rd!"
 machinesize="Basic_A1"
+sshkey="sshkey"
+ubuntuimage="b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04-LTS-amd64-server-20140724-en-us-30GB"
+vsimage="03f55de797f546a1b29d1b8d66be687a__Visual-Studio-2015-Ultimate-Preview-14.0.22310.1-AzureSDK-2.5-WS2012R2-201411.14"
+
+# Ask to make sure we can run
+echo ""
+echo "WARNING! This script will create a demo environment in Azure for you"
+echo "  You HAVE TO MAKE SURE that you have selected an appropriate Azure"
+echo "  account using 'azure account ...' before running this script."
+echo ""
+echo "This script will perform the following actions:"
+echo "  Create an affinity group $affinitygroupname"
+echo "  Create a storage account $storagename"
+echo "  Create an SSH key file for passwordless SSH"
+echo "  Create a vnet $vnetname"
+echo "  Create a Linux VM $linuxclientname"
+echo "  Create a Docker Host VM $dockerhostname"
+echo "  Create a VS2015 VM $vsname"
+echo ""
+echo "Press enter to continue or stop script now ..."
+read confirm
 
 # Define Azure affinity group
 azure account affinity-group create --location "$region" --label "$prefix" "$affinitygroupname"
@@ -38,9 +61,37 @@ azure storage account create --affinity-group "$affinitygroupname" --label "$pre
 # Define Azure network
 azure network vnet create --affinity-group "$affinitygroupname" "$vnetname"
 
+# Generate SSH key file
+if [ ! -f ${sshkey}.cer ]; then
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$sshkey".key -out "$sshkey".pem \
+		-config createdockerkeys.config
+	chmod 600 ${sshkey}.key
+fi
+
 # Create docker Linux client (also used to create other VMs)
 azure vm create --ssh 22 --virtual-network-name "$vnetname" \
 --vm-size "$machinesize" $linuxclientname --affinity-group "$affinitygroupname" \
-"b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04-LTS-amd64-server-20140724-en-us-30GB" \
-$username $password
+--ssh-cert ${sshkey}.pem --no-ssh-password "$ubuntuimage" $username 
+
+# Create docker host (note that this will create docker certs, too)
+azure vm docker create --ssh 22 --virtual-network-name "$vnetname" \
+--vm-size "$machinesize" $dockerhostname --affinity-group "$affinitygroupname" \
+--ssh-cert ${sshkey}.pem --no-ssh-password "$ubuntuimage" $username 
+
+# Create VS2015 trial VM (Windows)
+azure vm create --rdp --virtual-network-name "$vnetname" \
+--vm-size "$machinesize" $vsname --affinity-group "$affinitygroupname" \
+"$vsimage" $username $password
+
+# Wait until VMs came up
+echo ""
+echo "Please check Azure portal and press enter when all VMs are up and running"
+read confirmRunning
+
+# Configure Docker host
+ssh -i ${sshkey}.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+${username}@${linuxclientname}.cloudapp.net "sudo sh" < configureLinuxClient.sh
+
+ssh -i ${sshkey}.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+${username}@${dockerhostname}.cloudapp.net "sudo sh" < configureDockerHost.sh
 

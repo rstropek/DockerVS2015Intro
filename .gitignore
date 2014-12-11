@@ -1,2 +1,4 @@
 azure.err
+*.swp
+sshkey.*
 
