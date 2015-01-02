@@ -107,4 +107,7 @@ scp -i sshkey.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r
 ~/.docker dockersample@dockersamplelinuxclient.cloudapp.net:~/.docker
 
 scp -i sshkey.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r \
+~/.docker dockersample@dockersamplehost.cloudapp.net:~/.docker
+
+scp -i sshkey.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r \
 ~/.docker dockersample@dockersamplehost.cloudapp.net:/app/src/.docker
