@@ -68,7 +68,7 @@ azure storage account create --affinity-group "$affinitygroupname" --label "$pre
 azure network vnet create --affinity-group "$affinitygroupname" "$vnetname"
 
 # Generate SSH key file
-if [ ! -f ${sshkey}.cer ]; then
+if [ ! -f ${sshkey}.key ]; then
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "$sshkey".key -out "$sshkey".pem \
 		-config createdockerkeys.config
 	chmod 600 ${sshkey}.key
