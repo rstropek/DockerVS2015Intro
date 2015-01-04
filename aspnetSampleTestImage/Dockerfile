@@ -1,0 +1,26 @@
+# Image for testing ASP.NET vNext samples
+FROM aspnet
+MAINTAINER Rainer Stropek "rainer@timecockpit.com"
+ENV REFRESHED_AT 2015-01-02
+
+ENV SOURCE_DIR /app/src
+
+# Create directory that will receive sourcecode
+RUN mkdir -p $SOURCE_DIR
+WORKDIR $SOURCE_DIR
+
+# Copy the script that will run whenever we start a new container
+# from this image
+COPY refreshAndRunSample.sh $SOURCE_DIR/
+RUN chmod a+x $SOURCE_DIR/refreshAndRunSample.sh
+
+# Get the initial version of the ASP.NET vNext sample and restore
+# packages. In practice you could e.g. get your application's code
+# from a git repository.
+RUN apt-get -qqy install git
+RUN git init \
+ && git pull https://github.com/aspnet/Home.git \
+ && cd  samples/HelloMvc/ \
+ && kpm restore
+
+ENTRYPOINT ["/app/src/refreshAndRunSample.sh"]
