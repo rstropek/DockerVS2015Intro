@@ -82,7 +82,7 @@ Host should answer correctly.
 
 Now that Docker is working, you can try to create your first Docker Container.
 This is done using the command 
-`docker --tls run -h tcp://dockersamplehost.cloudapp.net:4243 -i -t ubuntu /bin/bash`.
+`docker --tls -H tcp://dockersamplehost.cloudapp.net:4243 run -i -t ubuntu /bin/bash`.
 It opens a bash shell in a new Ubuntu container.
 You can read more about the parameters of the `docker` command in the 
 [Docker documentation](https://docs.docker.com/userguide/usingdocker/).
