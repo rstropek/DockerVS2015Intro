@@ -2,25 +2,25 @@
 
 ## Introduction
 
-This sample demonstrates the use of Docker for HTML and ASP.NET vNext
-development. It contains scripts to automatically create the demo
-environment in Azure.
+This sample demonstrates the use of [Docker](https://www.docker.com/) 
+for HTML- and [ASP.NET vNext](http://www.asp.net/vnext)-development on Linux. 
+It contains scripts to automatically create the demo environment in Azure.
 
 ## Demo environment
 
 The script [createDemoEnv.sh](createDemoEnv.sh) creates three
-virtual machines in a separate vnet in Microsoft Azure:
+virtual machines in a separate vnet in [Microsoft Azure](http://azure.microsoft.com):
 
 * Docker Host
   Ubuntu-based Docker host.
 
-* Linux Docker Client
+* Docker Client
   Ubuntu-based Docker client. Use it to play with the Linux-based Docker
   client. Note that the create script automatically copies
   the Docker certificates created during VM setup of the Docker Host to
   this client. Therefore this client can talk to the Docker Host using TLS.
-  The script also installs and configures Samba so that you can easily
-  exchange files (e.g. ASP.NET projects) with the VS2015 Windows machine
+  The script also installs and configures [Samba](https://www.samba.org/samba/) 
+  so that you can easily exchange files (e.g. ASP.NET projects) with the VS2015 Windows machine
   (see below).
 
 * Visual Studio 2015 Preview on Windows (optionally)
