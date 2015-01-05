@@ -1,10 +1,20 @@
 # Docker on Microsoft Azure Sample
 
+Creator: Rainer Stropek, Azure MVP
+
+Originally created for an article in the German 
+(Windows Developer Magazine)[http://windowsdeveloper.de/].
+
 ## Introduction
 
 This sample demonstrates the use of [Docker](https://www.docker.com/) 
 for HTML- and [ASP.NET vNext](http://www.asp.net/vnext)-development on Linux. 
 It contains scripts to automatically create the demo environment in Azure.
+
+At the end of this sample, you will have ASP.NET MVC applications running on
+Linux in a Docker Container :-)
+
+This 
 
 ## Demo environment
 
@@ -56,7 +66,7 @@ sudo npm install -g azure-cli
      Optionally, you can select an account using `azure account set myAzureAccountName`.
    
 If you have that, clone this Github repository and run [createDemoEnv.sh](createDemoEnv.sh).
-You will probably need to adapt the name constants (specifically `prefix`) at the beginning 
+You will *probably need to adapt the name constants* (specifically `prefix`) at the beginning 
 of the file as the names might already be taken by other Azure users.
 
 Once the script ran to completion, you can use the helper scripts 
@@ -64,8 +74,65 @@ Once the script ran to completion, you can use the helper scripts
 [openDockerHostShell.sh](openDockerHostShell.sh) to open a remote shells
 on the Linux machines.
 
-To check if everything worked well, connect to the Linux client machine and try
+To check if everything worked well, connect to the *Linux client machine* 
+(Docker Client) using [openLinuxClientShell.sh](openLinuxClientShell.sh) and try
 `docker --tls=true -H tcp://dockersamplehost.cloudapp.net:4243 info`. The Docker
 Host should answer correctly.
 
+## Manually Starting Docker Containers
+
+Now that Docker is working, you can try to create your first Docker Container.
+This is done using the command 
+`docker --tls run -h tcp://dockersamplehost.cloudapp.net:4243 -i -t ubuntu /bin/bash`.
+It opens a bash shell in a new Ubuntu container.
+You can read more about the parameters of the `docker` command in the 
+(Docker documentation)[https://docs.docker.com/userguide/usingdocker/].
+
+If you are tired of specifying the remote docker host, you can set the 
+`DOCKER_HOST` environment variable using the command
+`export DOCKER_HOST=tcp://dockersamplehost.cloudapp.net:4243`. After that,
+you can just write `docker --tls run -i -t ubuntu /bin/bash`.
+
+Start multiple containers as described above and note how fast new containers
+are started after the base image `ubuntu` has been downloaded.
+
+## Nginx Webserver in a Docker Container
+
+Next, let's try to run a static website using (nginx)[http://nginx.org/en/]. Instead
+of creating the container manually, use the following 
+(Dockerfile)[https://docs.docker.com/reference/builder/] (store a sample
+**default.html** file next to the dockerfile):
+
+```
+# Version 0.0.1
+FROM nginx
+MAINTAINER Rainer Stropek "rainer@timecockpit.com"
+ENV REFRESHED_AT 2014-01-02
+RUN apt-get -qq update
+COPY *.html /usr/share/nginx/html/
+```
+
+From this dockerfile, you can create a docker image using 
+`docker --tls build -t staticweb .`. After this command, you should find the new
+image in docker's image list: `docker --tls images`.
+
+Now we can start a container: `docker --tls run --name staticwebcontainer -d -p 80:80 staticweb`.
+After this command, you should find the new, running container in docker's container
+list: `docker --tls ps`. Stop the container using docker's `stop` command.
+
+## ASP.NET vNext in a Linux Docker Container
+
+Ready to run ASP.NET vNext in a Linux Docker Container? Fortunately, Microsoft provides
+a ready-made docker base image for ASP.NET vNext: 
+(microsoft/aspnet)[https://registry.hub.docker.com/u/microsoft/aspnet/].
+
+The dockerfile (aspnetSampleTestImage/Dockerfile)[aspnetSampleTestImage/Dockerfile] uses
+this base image to get the official ASP.NET vNext samples from 
+(GitHub)[https://github.com/aspnet/home], restores the necessary packages (`kpm restore`),
+and starts the (Kestrel)[https://github.com/aspnet/KestrelHttpServer] webserver.
+
+1. Build the docker image using `docker --tls build -t myapp .`
+2. Run the docker container with kestrel using `docker --tls run -d -t -p 80:5004 myapp`
+
+After that, you have ASP.NET under Linux running inside a docker container :-)
 
