@@ -55,7 +55,7 @@ sudo npm install -g azure-cli
   5. Validate if the correct Azure account has been selected (`azure account list`).
      Optionally, you can select an account using `azure account set myAzureAccountName`.
    
-If you have that, clone this Github repository and run [createDemoEnv.sh](blob/master/createDemoEnv.sh).
+If you have that, clone this Github repository and run [createDemoEnv.sh](createDemoEnv.sh).
 You will probably need to adapt the name constants (specifically `prefix`) at the beginning 
 of the file as the names might already be taken by other Azure users.
 
