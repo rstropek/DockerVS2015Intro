@@ -50,9 +50,10 @@ echo "  - Create an SSH key file for passwordless SSH"
 echo "  - Create a vnet '$vnetname'"
 echo "    (all VMs will be assigned to it)"
 echo "  - Create a Linux VM '$linuxclientname'"
-echo "  - Create a Docker Host VM '$dockerhostname'"
 echo "    (will also contain a Samba share for file exchange)"
+echo "  - Create a Docker Host VM '$dockerhostname'"
 echo "  - Create a VS2015 VM '$vsname'"
+echo "    (for demo purposes only; not used in the core sample)
 echo ""
 echo "Press any key to continue or stop script now ..."
 read -n 1 -s
@@ -85,9 +86,11 @@ azure vm docker create --ssh 22 --virtual-network-name "$vnetname" \
 --ssh-cert ${sshkey}.pem --no-ssh-password "$ubuntuimage" $username 
 
 # Create VS2015 trial VM (Windows)
-azure vm create --rdp --virtual-network-name "$vnetname" \
---vm-size "$machinesize" $vsname --affinity-group "$affinitygroupname" \
-"$vsimage" $username $password
+# (Just for demo purposes, not part of the core sample. Uncomment
+#  if you want to play with VS2015 together with Docker)
+# azure vm create --rdp --virtual-network-name "$vnetname" \
+# --vm-size "$machinesize" $vsname --affinity-group "$affinitygroupname" \
+# "$vsimage" $username $password
 
 # Wait until VMs came up
 echo ""
@@ -98,16 +101,16 @@ read -n 1 -s
 ssh -i ${sshkey}.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
 ${username}@${linuxclientname}.cloudapp.net "sudo sh" < configureLinuxClient.sh
 
-# Configure Docker host
+# Configure Linux Docker host
 ssh -i ${sshkey}.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-${username}@${dockerhostname}.cloudapp.net "sudo sh" < configureDockerHost.sh
+${username}@${linuxclientname}.cloudapp.net "sudo apt-get -qqy update"
 
 # Copy Docker certificates
 scp -i sshkey.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r \
-~/.docker dockersample@dockersamplelinuxclient.cloudapp.net:~/.docker
+~/.docker dockersample@${linuxclientname}.cloudapp.net:~/.docker
 
 scp -i sshkey.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r \
-~/.docker dockersample@dockersamplehost.cloudapp.net:~/.docker
+~/.docker dockersample@${dockerhostname}.cloudapp.net:~/.docker
 
 scp -i sshkey.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r \
-~/.docker dockersample@dockersamplehost.cloudapp.net:/app/src/.docker
+~/.docker dockersample@${linuxclientname}.cloudapp.net:/app/src/.docker

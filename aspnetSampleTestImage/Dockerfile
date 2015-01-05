@@ -1,8 +1,9 @@
 # Image for testing ASP.NET vNext samples
-FROM aspnet
+FROM microsoft/aspnet
 MAINTAINER Rainer Stropek "rainer@timecockpit.com"
 ENV REFRESHED_AT 2015-01-02
 
+# Here we will place the source code that should be run
 ENV SOURCE_DIR /app/src
 
 # Create directory that will receive sourcecode
@@ -10,7 +11,8 @@ RUN mkdir -p $SOURCE_DIR
 WORKDIR $SOURCE_DIR
 
 # Copy the script that will run whenever we start a new container
-# from this image
+# from this image. The script will fetch the latest source code
+# from GitHub, restore packages, and run kestrel web server.
 COPY refreshAndRunSample.sh $SOURCE_DIR/
 RUN chmod a+x $SOURCE_DIR/refreshAndRunSample.sh
 
