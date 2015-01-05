@@ -53,7 +53,7 @@ echo "  - Create a Linux VM '$linuxclientname'"
 echo "    (will also contain a Samba share for file exchange)"
 echo "  - Create a Docker Host VM '$dockerhostname'"
 echo "  - Create a VS2015 VM '$vsname'"
-echo "    (for demo purposes only; not used in the core sample)
+echo "    (for demo purposes only; not used in the core sample)"
 echo ""
 echo "Press any key to continue or stop script now ..."
 read -n 1 -s
