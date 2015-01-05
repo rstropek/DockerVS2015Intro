@@ -3,7 +3,7 @@
 Creator: Rainer Stropek, Azure MVP
 
 Originally created for an article in the German 
-(Windows Developer Magazine)[http://windowsdeveloper.de/].
+[Windows Developer Magazine](http://windowsdeveloper.de/).
 
 ## Introduction
 
@@ -86,7 +86,7 @@ This is done using the command
 `docker --tls run -h tcp://dockersamplehost.cloudapp.net:4243 -i -t ubuntu /bin/bash`.
 It opens a bash shell in a new Ubuntu container.
 You can read more about the parameters of the `docker` command in the 
-(Docker documentation)[https://docs.docker.com/userguide/usingdocker/].
+[Docker documentation](https://docs.docker.com/userguide/usingdocker/).
 
 If you are tired of specifying the remote docker host, you can set the 
 `DOCKER_HOST` environment variable using the command
@@ -98,9 +98,9 @@ are started after the base image `ubuntu` has been downloaded.
 
 ## Nginx Webserver in a Docker Container
 
-Next, let's try to run a static website using (nginx)[http://nginx.org/en/]. Instead
+Next, let's try to run a static website using [nginx](http://nginx.org/en/). Instead
 of creating the container manually, use the following 
-(Dockerfile)[https://docs.docker.com/reference/builder/] (store a sample
+[Dockerfile](https://docs.docker.com/reference/builder/) (store a sample
 **default.html** file next to the dockerfile):
 
 ```
@@ -124,12 +124,12 @@ list: `docker --tls ps`. Stop the container using docker's `stop` command.
 
 Ready to run ASP.NET vNext in a Linux Docker Container? Fortunately, Microsoft provides
 a ready-made docker base image for ASP.NET vNext: 
-(microsoft/aspnet)[https://registry.hub.docker.com/u/microsoft/aspnet/].
+[microsoft/aspnet](https://registry.hub.docker.com/u/microsoft/aspnet/).
 
-The dockerfile (aspnetSampleTestImage/Dockerfile)[aspnetSampleTestImage/Dockerfile] uses
+The dockerfile [aspnetSampleTestImage/Dockerfile](aspnetSampleTestImage/Dockerfile) uses
 this base image to get the official ASP.NET vNext samples from 
-(GitHub)[https://github.com/aspnet/home], restores the necessary packages (`kpm restore`),
-and starts the (Kestrel)[https://github.com/aspnet/KestrelHttpServer] webserver.
+[GitHub](https://github.com/aspnet/home), restores the necessary packages (`kpm restore`),
+and starts the [Kestrel](https://github.com/aspnet/KestrelHttpServer) webserver.
 
 1. Build the docker image using `docker --tls build -t myapp .`
 2. Run the docker container with kestrel using `docker --tls run -d -t -p 80:5004 myapp`
