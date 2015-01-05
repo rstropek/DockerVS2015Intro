@@ -14,7 +14,6 @@ It contains scripts to automatically create the demo environment in Azure.
 At the end of this sample, you will have ASP.NET MVC applications running on
 Linux in a Docker Container :-)
 
-This 
 
 ## Demo environment
 
