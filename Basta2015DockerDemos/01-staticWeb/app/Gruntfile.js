@@ -20,10 +20,15 @@ module.exports = function(grunt) {
           'dist/built.min.js': ['<%= concat.dist.dest %>']
         }
       }
+    },
+    watch: {
+      files: ['index.html', 'src/**/*.js'],
+      tasks: ['concat', 'uglify']
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
   grunt.registerTask('default', ['concat', 'uglify']);
