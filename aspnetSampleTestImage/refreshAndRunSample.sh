@@ -4,9 +4,9 @@
 git pull https://github.com/aspnet/Home.git
 
 # Restore packages
-cd samples/HelloMvc/
-kpm restore
+cd samples/1.0.0-beta4/HelloMvc/
+dnu restore
 
 # Start kestrel web server
-k kestrel
+dnx . kestrel
 

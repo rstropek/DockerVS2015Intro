@@ -31,8 +31,8 @@ username="dockersample"
 password="P@ssw0rd!"
 machinesize="Basic_A1"
 sshkey="sshkey"
-ubuntuimage="b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_04-LTS-amd64-server-20140724-en-us-30GB"
-vsimage="03f55de797f546a1b29d1b8d66be687a__Visual-Studio-2015-Ultimate-Preview-14.0.22310.1-AzureSDK-2.5-WS2012R2-201411.14"
+ubuntuimage="b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-14_10-amd64-server-20150416-en-us-30GB"
+vsimage="03f55de797f546a1b29d1b8d66be687a__Visual-Studio-2015-Enterprise-RC-AzureSDK-2.6-WS2012R2"
 
 # Ask to make sure we can run
 echo ""
@@ -63,7 +63,7 @@ azure account affinity-group create --location "$region" --label "$prefix" "$aff
 
 # Create storage account for VMs
 azure storage account create --affinity-group "$affinitygroupname" --label "$prefix" \
---disable-geoReplication "$storagename"
+--type LRS "$storagename"
 
 # Define Azure network
 azure network vnet create --affinity-group "$affinitygroupname" "$vnetname"

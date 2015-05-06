@@ -22,7 +22,7 @@ RUN chmod a+x $SOURCE_DIR/refreshAndRunSample.sh
 RUN apt-get -qqy install git
 RUN git init \
  && git pull https://github.com/aspnet/Home.git \
- && cd  samples/HelloMvc/ \
- && kpm restore
+ && cd  samples/1.0.0-beta4/HelloMvc/ \
+  dnu restore
 
 ENTRYPOINT ["/app/src/refreshAndRunSample.sh"]
