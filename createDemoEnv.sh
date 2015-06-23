@@ -103,7 +103,7 @@ ${username}@${linuxclientname}.cloudapp.net "sudo sh" < configureLinuxClient.sh
 
 # Configure Linux Docker host
 ssh -i ${sshkey}.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-${username}@${linuxclientname}.cloudapp.net "sudo apt-get -qqy update"
+${username}@${dockerhostname}.cloudapp.net "sudo apt-get -qqy update"
 
 # Copy Docker certificates
 scp -i sshkey.key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -r \
