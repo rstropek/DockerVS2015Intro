@@ -1,5 +1,5 @@
 # Image for testing ASP.NET vNext samples
-FROM microsoft/aspnet
+FROM microsoft/aspnet:1.0.0-beta7
 MAINTAINER Rainer Stropek "rainer@timecockpit.com"
 ENV REFRESHED_AT 2015-01-02
 
@@ -19,10 +19,12 @@ RUN chmod a+x $SOURCE_DIR/refreshAndRunSample.sh
 # Get the initial version of the ASP.NET vNext sample and restore
 # packages. In practice you could e.g. get your application's code
 # from a git repository.
+RUN apt-get update
 RUN apt-get -qqy install git
-RUN git init \
- && git pull https://github.com/aspnet/Home.git \
- && cd  samples/1.0.0-beta4/HelloMvc/ \
-  dnu restore
+RUN apt-get -qqy install libc6-dev
+RUN git init 
+RUN git pull https://github.com/aspnet/Home.git
+RUN cd  samples/1.0.0-beta7/HelloMvc/
+RUN dnu restore
 
 ENTRYPOINT ["/app/src/refreshAndRunSample.sh"]
