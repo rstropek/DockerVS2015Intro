@@ -127,7 +127,7 @@ a ready-made docker base image for ASP.NET vNext:
 
 The dockerfile [aspnetSampleTestImage/Dockerfile](aspnetSampleTestImage/Dockerfile) uses
 this base image to get the official ASP.NET vNext samples from 
-[GitHub](https://github.com/aspnet/home), restores the necessary packages (`kpm restore`),
+[GitHub](https://github.com/aspnet/home), restores the necessary packages (`dnu restore`),
 and starts the [Kestrel](https://github.com/aspnet/KestrelHttpServer) webserver.
 
 1. Build the docker image using `docker --tls build -t myapp .`
