@@ -1,7 +1,7 @@
 # Image for testing ASP.NET vNext samples
-FROM microsoft/aspnet:1.0.0-beta7
+FROM microsoft/aspnet:1.0.0-rc1-update1-coreclr
 MAINTAINER Rainer Stropek "rainer@timecockpit.com"
-ENV REFRESHED_AT 2015-01-02
+ENV REFRESHED_AT 2015-12-17
 
 # Here we will place the source code that should be run
 ENV SOURCE_DIR /app/src
@@ -24,7 +24,7 @@ RUN apt-get -qqy install git
 RUN apt-get -qqy install libc6-dev
 RUN git init 
 RUN git pull https://github.com/aspnet/Home.git
-RUN cd  samples/1.0.0-beta7/HelloMvc/
+RUN cd  samples/1.0.0-rc1-update1/HelloMvc/
 RUN dnu restore
 
 ENTRYPOINT ["/app/src/refreshAndRunSample.sh"]
