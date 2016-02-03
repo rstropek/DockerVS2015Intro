@@ -1,0 +1,6 @@
+printer:
+  build: .
+  links:
+   - dependent-service
+dependent-service:
+  image: dependent-service
