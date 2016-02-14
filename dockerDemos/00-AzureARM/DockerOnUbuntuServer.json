@@ -203,7 +203,7 @@
         "typeHandlerVersion": "1.4",
         "settings": {
           "fileUris": [
-            "<url>"
+            "https://raw.githubusercontent.com/rstropek/DockerVS2015Intro/master/dockerDemos/00-AzureARM/configure.sh"
           ],
           "commandToExecute": "bash configure.sh"
         }
