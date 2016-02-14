@@ -24,5 +24,6 @@ New-AzureRmResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName
                                    -Force -Verbose
 
 # Just some useful other commands:
+# Login-AzureRMAccount
 # Get-AzureRmVMImageSku -Location 'northeurope' -Offer 'UbuntuServer' -PublisherName 'Canonical'
 # Remove-AzureRmResourceGroup -Name $ResourceGroupName -Force -Verbose
