@@ -14,7 +14,7 @@ if ($ResourceGroupCount.Count -eq 0) {
     New-AzureRmStorageAccount -Name $StorageAccountName -ResourceGroupName $ResourceGroupName -Type Standard_LRS `
         -Location $ResourceGroupLocation -Verbose
 }
-
+docker
 # Trigger deployment
 New-AzureRmResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName + '-' + ((Get-Date).ToUniversalTime()).ToString('MMdd-HHmm')) `
                                    -ResourceGroupName $ResourceGroupName `
@@ -27,3 +27,4 @@ New-AzureRmResourceGroupDeployment -Name ((Get-ChildItem $TemplateFile).BaseName
 # Login-AzureRMAccount
 # Get-AzureRmVMImageSku -Location 'northeurope' -Offer 'UbuntuServer' -PublisherName 'Canonical'
 # Remove-AzureRmResourceGroup -Name $ResourceGroupName -Force -Verbose
+

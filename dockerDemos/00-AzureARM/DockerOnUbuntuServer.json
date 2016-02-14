@@ -188,6 +188,26 @@
         "autoUpgradeMinorVersion": true,
         "settings": { }
       }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmName'), '/config')]",
+      "apiVersion": "2015-06-15",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), variables('extensionName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4",
+        "settings": {
+          "fileUris": [
+            "https://raw.githubusercontent.com/rstropek/DockerVS2015Intro/master/dockerDemos/00-AzureARM/configure.sh"
+          ],
+          "commandToExecute": "bash configure.sh"
+        }
+      }
     }
   ]
 }
