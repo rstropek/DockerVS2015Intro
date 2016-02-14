@@ -1,0 +1,6 @@
+*.ts
+Dockerfile
+Gulpfile.*
+typings
+node_modules
+
