@@ -1,7 +1,6 @@
 ﻿# Note that this script needs PuTTY and openssl. You might
-# need to change the paths according to your setup.
+# need to change the paths according to your setup
 $putty = "c:\Program Files (x86)\PuTTY"
-$opensslConfig = "c:\Program Files\OpenSSL-Win64\bin\openssl.cfg"
 $openssl = "c:\Program Files\OpenSSL-Win64\bin\openssl.exe"
 $scriptRoot = $PSScriptRoot # "C:\Code\github\DockerVS2015Intro\dockerDemos\00-AzureARM"
 cd $scriptRoot
@@ -31,7 +30,7 @@ $fqn = $ResourceGroupName.ToLower() + ".northeurope.cloudapp.azure.com"
 # Write FQN in config-file for certs
 (Get-Content key.template.config).replace('*', $fqn) | Set-Content key.config
 # Generate keys for Docker
-.\generateKeys.cmd $opensslConfig $openssl $fqn
+.\generateKeys.cmd $openssl $fqn
 # Read keys as Base64-encoded strings
 $content = [IO.File]::ReadAllText("$scriptRoot\ca.pem")
 $b  = [System.Text.Encoding]::UTF8.GetBytes($content)
