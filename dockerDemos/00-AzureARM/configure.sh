@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Sample script for configuring Docker client machine.
+
 sudo apt-get update
 
 # Install Node.js 5
