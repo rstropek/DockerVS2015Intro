@@ -12,3 +12,4 @@ sudo apt-get install linux-image-extra-$(uname -r)
 sudo apt-get install -y docker-engine
 
 mkdir /home/training/.docker
+chown training /home/training/.docker
