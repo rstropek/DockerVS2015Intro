@@ -1,14 +1,14 @@
 ﻿# Note that this script needs PuTTY and openssl. You might
 # need to change the paths according to your setup
-$putty = "c:\Program Files (x86)\PuTTY"
-$openssl = "c:\Program Files\OpenSSL-Win64\bin\openssl.exe"
+$putty = "C:\ProgramData\chocolatey\lib\putty.portable\tools"
+$openssl = "C:\Program Files\OpenSSL\bin\openssl.exe"
 $scriptRoot = $PSScriptRoot # "C:\Code\github\DockerVS2015Intro\dockerDemos\00-AzureARM"
 cd $scriptRoot
 
 # Note that you will need to change the following two names as they
 # also used for unique DNS name.
-$ResourceGroupName = 'DockerTraining'
-$StorageAccountName = 'dockertraining2016'
+$ResourceGroupName = 'DockerTraining04'
+$StorageAccountName = 'dockertraining04'
 
 $ResourceGroupLocation = 'northeurope'
 $TemplateFile = 'DockerOnUbuntuServer.json'

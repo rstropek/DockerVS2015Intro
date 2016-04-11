@@ -1,7 +1,7 @@
 REM Generate keys for Docker
 REM For details see https://docs.docker.com/engine/security/https/
 
-SET OPENSSL_CONF=c:\Program Files\OpenSSL-Win64\bin\openssl.cfg
+SET OPENSSL_CONF=C:\Program Files\OpenSSL\bin\openssl.cfg
 %1 genrsa -aes256 -out ca-key.pem -passout pass:test 4096
 %1 req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem -config key.config -passin pass:test
 %1 genrsa -out server-key.pem -passout pass:test 4096
