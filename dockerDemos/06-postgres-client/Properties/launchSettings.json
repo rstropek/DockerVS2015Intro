@@ -1,0 +1,10 @@
+{
+    "web": {
+      "commandName": "web",
+      "environmentVariables": {
+        "POSTGRES_HOST": "mydb",
+        "Hosting:Environment": "Development"
+      }
+    }
+  }
+}

@@ -1,9 +1,10 @@
-# Docker on Microsoft Azure Sample
+# Docker Introduction (Focus on Azure)
 
 Creator: Rainer Stropek, Azure MVP
 
 Originally created for an article in the German 
-[Windows Developer Magazine](http://windowsdeveloper.de/).
+[Windows Developer Magazine](http://windowsdeveloper.de/). Extended and refined for various
+trainings I did with customers.
 
 
 ## Introduction
@@ -19,6 +20,8 @@ The folder [slides](slides) contains PowerPoint slides about Docker. The slide d
 contains a lot of samples you can try based on a demo environment created with
 the scripts in this Github repository.
 
+Additional samples and code snippets for demo can be found in the [dockerDemos](dockerDemos) folder.
+
 
 ## Demo environment
 
@@ -32,6 +35,11 @@ The script [Deploy-AzureResourceGroup.ps1](dockerDemos/00-AzureARM/Deploy-AzureR
   Ubuntu-based Docker client. Note that the create script automatically copies
   the Docker certificates created during VM setup of the Docker Host to
   this client. Therefore this client can talk to the Docker Host using TLS.
+
+To demonstrate the [Azure Files-Driver for Docker Volumes](https://github.com/Azure/azurefile-dockervolumedriver)
+you have to [install it](https://github.com/Azure/azurefile-dockervolumedriver/tree/master/contrib/init/systemd)
+on the Docker Host. This step is not yet automated in the deployment script mentioned above. You currently
+have to do that manually.
 
   
 ## Setting up the Demo Environment
