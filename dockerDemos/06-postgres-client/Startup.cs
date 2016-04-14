@@ -36,7 +36,7 @@ namespace PostgresClientDemo
             using (var conn = new NpgsqlConnection(connectionString))
             {
                 await conn.OpenAsync();
-                return await conn.QueryAsync<Customer>("SELECT * FROM Customers;");
+                return await conn.QueryAsync<Customer>("SELECT * FROM Customer;");
             }
         }
     }
