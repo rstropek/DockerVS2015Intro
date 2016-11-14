@@ -1,4 +1,9 @@
 azure.err
 *.swp
 sshkey.*
+node_modules
+dist
+.vs
+*.pem
+~*.pptx
 
