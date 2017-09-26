@@ -1,0 +1,9 @@
+obj
+bin
+.vs
+*.csproj.user
+launchSettings.json
+fdd
+scd
+packages
+out
