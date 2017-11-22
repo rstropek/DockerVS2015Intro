@@ -1,0 +1,6 @@
+bin
+obj
+azure-vote-all-in-one-redis.yml
+Dockerfile
+*.csproj
+*.cs
