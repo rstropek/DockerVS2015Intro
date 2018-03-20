@@ -1,0 +1,25 @@
+POST http://localhost:49981/api/groups
+Content-Type: application/json
+
+{
+    "name": "Friends"
+}
+
+###
+GET http://localhost:49981/api/groups
+
+###
+DELETE http://localhost:49981/api/groups/2
+
+###
+GET http://localhost:49981/api/persons
+
+###
+POST http://localhost:49981/api/persons
+Content-Type: application/json
+
+{
+    "firstName": "Max",
+    "lastName": "Muster",
+    "groupID": 1
+}
