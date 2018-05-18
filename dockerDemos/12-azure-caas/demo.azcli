@@ -1,0 +1,95 @@
+# === PREPARE ========================================================
+
+# Login to Azure
+az login
+
+# Select subscription we want to use
+az account set --subscription "b33f0285-db27-4896-ac5c-df22004b0aba"
+
+# Create resource group
+az group create --name we-are-developers --location westeurope
+
+# === ACR ============================================================
+
+# Create Azure Container Registry (ACR)
+az acr create --resource-group we-are-developers --name wearedevs --sku Basic --admin-enabled
+
+# Login to ACR to enable “docker push”
+az acr login --name wearedevs
+az acr credential show --name wearedevs --query "passwords[0].value"
+
+# Create demo .NET Core app
+mkdir src
+docker run -v ~/src:/src -w /src microsoft/dotnet:2.1-sdk dotnet new mvc
+
+# Add prepared Dockerfile and build Docker images
+cp demo/* src/
+docker build -t rstropek/wearedevs-webapp src
+
+# Tag and push image to ACR
+docker tag rstropek/wearedevs-webapp wearedevs.azurecr.io/wearedevs-webapp
+docker push wearedevs.azurecr.io/wearedevs-webapp
+
+# Try running it...
+# ...locally
+docker run -p 8081:80 wearedevs.azurecr.io/wearedevs-webapp
+
+# === ACI ============================================================
+
+# ...in ACI
+az container create --resource-group we-are-developers --name wearedevs-webapp --image wearedevs.azurecr.io/wearedevs-webapp --cpu 1 --memory 1 --ip-address public --ports 80 --registry-username wearedevs --registry-password ...
+az container delete --resource-group we-are-developers --name wearedevs-webapp --yes
+
+# Create storage account and file share
+az storage account create --resource-group we-are-developers --name wadacistorage --location westeurope --sku Standard_LRS
+export AZURE_STORAGE_CONNECTION_STRING=`az storage account show-connection-string --resource-group we-are-developers --name wadacistorage --output tsv`
+az storage share create -n acishare
+
+# Get storage account key
+az storage account keys list --resource-group we-are-developers --account-name wadacistorage --query "[0].value" --output tsv
+
+# Run Azure CLI (example for build step) in ACI and save results in Azure Files
+az container create --resource-group we-are-developers --name wearedevs-build --image node --cpu 1 --memory 1 --azure-file-volume-account-name wadacistorage --azure-file-volume-share-name acishare --azure-file-volume-mount-path /src --command-line '/bin/bash -c "cd /src; npm install @angular/cli; ./node_modules/.bin/ng new myapp --skip-install --skip-git --minimal"' --restart-policy Never --azure-file-volume-account-key ...
+
+# === AKS ============================================================
+
+# Add Kubernetes support to Azure CLI
+az provider register -n Microsoft.ContainerService
+
+# Create service principal that Kubernetes will use to get images from ACR
+az ad sp create-for-rbac --name wearedevs --password P@ssw0rd123!
+
+# Assign “reader” role for ACR to AKS service principal
+az acr show --name wearedevs --resource-group we-are-developers --query "id"
+az role assignment create --assignee ...(app id) --role Reader --scope ...(ACR id)
+
+# Create Kubernetes cluster
+az aks create --resource-group we-are-developers --name wearedevs --node-count 1 --generate-ssh-keys --location westeurope --client-secret P@ssw0rd123!  --service-principal ...
+
+# Connect kubectl with AKS
+az aks get-credentials --resource-group we-are-developers --name wearedevs
+
+# Check connection to AKS
+kubectl get nodes
+
+# Create Kubernetes deployments and services
+kubectl appy -f demo/dotnet-demo.yaml
+
+# Watch front-end service to get public IP
+kubectl get service wearedevs-webapp --watch
+
+# Try to reach web app via public IP
+
+# Start Kubernetes dashboard (CMD, not bash as we need to start a local browser)
+az aks browse --resource-group we-are-developers --name wearedevs
+
+# See storage classes
+kubectl get all
+kubectl get sc
+
+# Create storage account and create a storage class for it
+az storage account create --resource-group MC_we-are-developers_wearedevs_westeurope --name wearedevsstorage --location westeurope --sku Standard_LRS
+kubectl apply -f demo/azure-file-sc.yaml
+
+# Run nginx webserver getting static website content from Azure files
+kubectl create -f demo/nginx-demo.yaml

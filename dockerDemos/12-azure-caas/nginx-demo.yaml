@@ -1,0 +1,32 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: wearedevs-nginx
+  labels:
+    app: wearedevs-nginx
+spec:
+  containers:
+    - name: wearedevs-nginx
+      image: nginx
+      volumeMounts:
+      - mountPath: /usr/share/nginx/html
+        name: volume
+      ports:
+      - containerPort: 80
+  volumes:
+    - name: volume
+      persistentVolumeClaim:
+        claimName: wearedevs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wearedevs-nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: wearedevs-nginx
+
