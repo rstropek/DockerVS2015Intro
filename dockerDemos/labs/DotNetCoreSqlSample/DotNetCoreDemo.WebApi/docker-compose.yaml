@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web-api:
+    build: .
+    ports:
+     - "8085:80"
+    links:
+     - db
+  db:
+    image: microsoft/mssql-server-linux
+    environment:
+     - ACCEPT_EULA=Y
+     - SA_PASSWORD=P@ssw0rd!123
