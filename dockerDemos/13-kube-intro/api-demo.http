@@ -1,0 +1,35 @@
+GET http://127.0.0.1:8001/api/v1/nodes
+Accept: application/json
+
+###
+GET http://127.0.0.1:8001/api/v1/namespaces/default/pods
+
+###
+POST http://127.0.0.1:8001/api/v1/namespaces/default/pods
+Content-Type: application/json
+
+{
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+        "name": "api-demo-pod",
+        "labels": {
+            "app": "api-demo"
+        }
+    },
+    "spec": {
+        "containers": [
+            {
+                "name": "api-demo-pod",
+                "image": "nginx:alpine",
+                "ports": [
+                    { "containerPort": 80 }
+                ]
+            }
+        ]
+    }
+}
+
+###
+DELETE http://127.0.0.1:8001/api/v1/namespaces/default/pods/api-demo-pod
+
