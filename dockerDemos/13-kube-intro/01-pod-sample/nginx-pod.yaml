@@ -1,0 +1,15 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: nginx-pod
+  labels:
+    name: nginx-pod
+    app: workshop
+spec:
+  containers:
+  - name: nginx-pod
+    image: nginx
+    ports:
+      - containerPort: 80
+        name: http
+        protocol: TCP

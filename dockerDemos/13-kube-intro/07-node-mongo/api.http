@@ -1,0 +1,36 @@
+@host=http://localhost:32572
+
+GET {{host}}/api/events?past=true
+Accept: application/json
+
+###
+POST {{host}}/api/events
+Content-Type: application/json
+Accept: application/json
+
+{
+    "date": "2018-03-21T00:00:00",
+    "location": "Linz"
+}
+
+###
+POST {{host}}/api/events/5b18f9a550200701eaf2c3b5/registrations
+Content-Type: application/json
+Accept: application/json
+
+{
+    "participant": 
+    {
+        "givenName": "John",
+        "familyName": "Doe"
+    }
+}
+
+###
+GET {{host}}/api/events/5b18f9a550200701eaf2c3b5/registrations
+Accept: application/json
+
+###
+POST {{host}}/api/participants/5b18f9b07e107de193db2376/checkin/5b18f9b07e107de193db2373
+Content-Type: application/json
+Accept: application/json

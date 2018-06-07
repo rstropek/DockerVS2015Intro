@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: host-path
+  labels:
+    app: host-path
+spec:
+  containers:
+  - image: nginx
+    name: host-path
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: test-volume
+  volumes:
+  - name: test-volume
+    hostPath:
+      path: /host_mnt/c/temp/kubernetes-data
+      type: Directory
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: host-path-svc
+spec:
+  selector:
+    app: host-path
+  ports:
+  - port: 80
+    targetPort: 80
+  type: NodePort

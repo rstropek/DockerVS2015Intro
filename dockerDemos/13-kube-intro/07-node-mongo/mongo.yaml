@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-db
+spec:
+  selector:
+    matchLabels:
+      app: event-db
+  template:
+    metadata:
+      labels:
+        app: event-db
+    spec:
+      containers:
+      - name: event-db
+        image: mongo
+        ports:
+        - containerPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-db-svc
+spec:
+  selector:
+    app: event-db
+  ports:
+  - port: 27017
+    targetPort: 27017
+  type: NodePort

@@ -1,0 +1,51 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: k8sworkshop-nginx
+  labels:
+    app: k8sworkshop-nginx
+spec:
+  containers:
+    - name: k8sworkshop-nginx
+      image: nginx
+      volumeMounts:
+      - mountPath: /usr/share/nginx/html
+        name: volume
+      ports:
+      - containerPort: 80
+  volumes:
+    - name: volume
+      persistentVolumeClaim:
+        claimName: k8sworkshop-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8sworkshop-nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: k8sworkshop-nginx
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: k8sworkshop-files
+provisioner: kubernetes.io/azure-file
+parameters:
+  storageAccount: k8sworkshop
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: k8sworkshop-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: k8sworkshop-files
+  resources:
+    requests:
+      storage: 5Gi

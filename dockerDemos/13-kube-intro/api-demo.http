@@ -31,5 +31,9 @@ Content-Type: application/json
 }
 
 ###
+GET http://127.0.0.1:8001/api/v1/namespaces/default/pods?labelSelector=app%20in%20%28api-demo%29
+Accept: application/json
+
+###
 DELETE http://127.0.0.1:8001/api/v1/namespaces/default/pods/api-demo-pod
 

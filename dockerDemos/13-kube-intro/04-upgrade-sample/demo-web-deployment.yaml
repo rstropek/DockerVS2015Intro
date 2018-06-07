@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-web
+spec:
+  selector:
+    matchLabels:
+      app: demo-web
+  replicas: 5
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 30
+  template:
+    metadata:
+      labels:
+        app: demo-web
+    spec:
+      containers:
+      - name: demo-web
+        image: rstropek/docker-image-versioning:1.0
+        ports:
+          - containerPort: 80
+        env:
+          - name: PORT
+            value: "80"
+
+
