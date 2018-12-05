@@ -1,0 +1,161 @@
+# === PREPARE ========================================================================
+# Set some variables that we will use throughout this demo
+
+# SUBSCRIPTION="Your Azure Subscription Name"
+LOCATION="westeurope"
+RG="devopsconlive"
+REG="docmuc18"
+SKU="premium"
+SP="docmuc18-sp"
+PWD="P@ssw0rd123"
+WEB="docmuc18-web"
+IMG="helloworldweb"
+EVENT_SITE="docmuc18-events"
+APP_ENDPOINT="https://$EVENT_SITE.azurewebsites.net/api/updates"
+KV="vault$IMAGE"
+# WHTARGET="https://your-webhook-target.could-be-logic-app.com"
+GHUSR="rstropek"
+# GHPAT="your-github-personal-access-token"
+GHREPO="https://github.com/rstropek/acr-github-demo"
+TASK="ghhelloworld"
+
+# Log in and select correct account
+az login
+az account set --subscription "$SUBSCRIPTION"
+
+# Create resource group if it does not exist yet
+if [ $(az group exists --name "$RG") == 'false' ]
+then
+    az group create --name "$RG" --location "$LOCATION"
+fi
+
+# === CREATE =========================================================================
+
+# Create Azure Container Registry if it does not exist yet
+if [ $(az acr check-name --name "$REG" --query nameAvailable) == 'true' ]
+then
+    az acr create --resource-group "$RG" --name "$REG" --sku "$SKU" --admin-enabled
+fi
+# Get ID of ACR
+ACRID=$(az acr show --name "$REG" --resource-group "$RG" --query "id" -o tsv)
+
+# You could use the following command to get the password of the admin account
+# Prefer service principals (as shown below) for production scenarios
+# az acr credential show --name "$REG" --query "passwords[0].value"
+
+# Log in with individual account of developer (for e.g. pushing containers using docker cli)
+az acr login --name "$REG"
+
+# Create a service principal if it does not exist yet
+if [ $(az ad sp list --display-name "$SP" | jq length) == '0' ]
+then
+    az ad sp create-for-rbac --name "$SP" --password "$PWD"
+fi
+# Get ID of service principal
+SPAPPID=$(az ad sp list --display-name "$SP" --query "[].appId" -o tsv)
+
+# You could use the following command to delete the service principal
+# az ad sp delete --id "$SPAPPID"
+
+# Assign service principal the "Contributor" role so it can push images
+if [ $(az role assignment list --assignee "$SPAPPID" --role Contributor --scope "$ACRID" | jq length) == '0' ]
+then
+    az role assignment create --assignee "$SPAPPID" --role Contributor --scope "$ACRID"
+fi
+
+# Use usual "docker login" with service principal to authenticate at ACR
+docker login -u $SPAPPID -p $PWD $REG.azurecr.io
+
+# === PUSH AND BUILD =================================================================
+
+# Push an image to ACR with docker cli
+docker tag nginx:alpine $REG.azurecr.io/nginx:alpine
+docker push $REG.azurecr.io/nginx:alpine
+
+# Use ACR quick task to build an image in the cloud
+az acr build --registry "$REG" --image $IMG:v1 .
+
+# Inspect storage limits
+az acr show-usage --resource-group "$RG" --name "$REG" --output table
+
+# You could use the following statement to delete the image from ACR
+# az acr repository delete --name "$REG" --image $IMG:v1
+
+# === START CONTAINER ================================================================
+
+# Create Keyvault where we can securely store service principal name and secret
+if ! az keyvault show --resource-group "$RG" --name "$KV"
+then
+    az keyvault create --resource-group "$RG" --name "$KV"
+    # az keyvault delete --resource-group "$RG" --name "$KV"
+
+    # Create service principal and store the generated password in Keyvault
+    az keyvault secret set --vault-name $KV --name $REG-pull-pwd \
+        --value $(az ad sp create-for-rbac --name $REG-pull --scopes $ACRID --role reader --query password --output tsv)
+    # az ad sp delete --id $(az ad sp list --display-name "$REG-pull" --query "[].appId" -o tsv)
+
+    # Store service principal's name in KeyVault
+    az keyvault secret set --vault-name $KV --name $REG-pull-usr \
+        --value $(az ad sp show --id http://$REG-pull --query appId --output tsv)
+fi
+
+# Start container from image in ACR if it does not already exist.
+# Note that we use ACI here. Other options would be App Service or AKS (Kubernetes)
+if ! az container show --resource-group "$RG" --name "$WEB"
+then
+    # Note how we get service principal data from Keyvault
+    az container create --resource-group "$RG" --name "$WEB" --image $REG.azurecr.io/$IMG:v1 --cpu 1 --memory 1 --ip-address public --ports 80 \
+        --registry-login-server $REG.azurecr.io \
+        --registry-username $(az keyvault secret show --vault-name $KV --name $REG-pull-usr --query value -o tsv) \
+        --registry-password $(az keyvault secret show --vault-name $KV --name $REG-pull-pwd --query value -o tsv)
+
+    # You could use the following statement to see logs
+    # az container attach --resource-group "$RG" --name "$WEB"
+
+    # You could use the following statement to delete the container
+    # az container delete --resource-group "$RG" --name "$WEB" --yes
+fi
+
+# === INTEGRATION ====================================================================
+
+# Demo demo website that displays events happening in EventGrid
+if ! az appservice plan show --resource-group "$RG" --name "$EVENT_SITE-plan"
+then
+    az group deployment create --resource-group "$RG" \
+        --template-uri "https://raw.githubusercontent.com/Azure-Samples/azure-event-grid-viewer/master/azuredeploy.json" \
+        --parameters siteName=$EVENT_SITE hostingPlanName=$EVENT_SITE-plan
+fi
+
+# Register EventGrid provider if not already registered
+if [ $(az provider show --namespace Microsoft.EventGrid --query "registrationState" --output tsv) != "Registered" ]
+then
+    az provider register --namespace Microsoft.EventGrid
+fi
+
+# Add EventGrid subscription if not already exists
+if ! az eventgrid event-subscription show --name event-sub-acr --resource-id $ACRID
+then
+    az eventgrid event-subscription create --name event-sub-acr --resource-id $ACRID --endpoint $APP_ENDPOINT
+    # az eventgrid event-subscription delete --name event-sub-acr --resource-id $ACRID
+fi
+
+# Create a webhook so we get notified about container pushes
+if ! az acr webhook show --registry "$REG" --name "webhook1$REG"
+then
+    az acr webhook create --registry "$REG" --name "webhook1$REG" --actions push --uri $WHTARGET
+
+    # After creating the webhook, trigger a push and see how the webhook is triggered
+fi
+
+# Create a task that listens to change in GitHub and rebuilds images if necessary
+if ! az acr task show --registry "$REG" --name "$TASK"
+then
+    az acr task create --registry "$REG" --name "$TASK" --image $TASK:{{.Run.ID}} \
+        --context $GHREPO --branch master --file Dockerfile --git-access-token $GHPAT
+fi
+
+# Use the following command to manually trigger the task
+az acr task run --registry "$REG" --name "$TASK"
+
+# Use the following command to see a list of task runs
+az acr task list-runs --registry "$REG" --output table
