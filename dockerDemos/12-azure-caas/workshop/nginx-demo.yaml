@@ -1,0 +1,25 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: gather19-nginx
+  labels:
+    app: gather19-nginx
+spec:
+  containers:
+    - name: gather19-nginx
+      image: nginx:alpine
+      ports:
+      - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gather19-nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: gather19-nginx
+
