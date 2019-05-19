@@ -1,0 +1,20 @@
+# Push an image to ACR with docker cli
+docker pull nginx:alpine
+docker tag nginx:alpine $REG.azurecr.io/nginx:alpine
+docker push $REG.azurecr.io/nginx:alpine
+
+# Use ACR quick task to build an image in the cloud
+cd ./22-simple-web-image
+docker build -t $IMG --build-arg reg=$REG.azurecr.io .
+az acr build --registry "$REG" --image $IMG --build-arg reg=$REG.azurecr.io .
+az acr build --registry "$REG" --image $IMG:v2 --build-arg reg=$REG.azurecr.io .
+
+# You could use the following statement to delete the image from ACR:
+# az acr repository delete --name "$REG" --repository $IMG --yes
+
+# Inspect storage limits
+az acr show-usage --resource-group "$RG" --name "$REG" --output table
+
+# Get a list of repositories and tags in the registry
+az acr repository list --name $REG
+az acr repository show-tags --repository nginx --name $REG

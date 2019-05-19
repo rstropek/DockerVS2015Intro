@@ -1,0 +1,60 @@
+# You could use the following command to get the password of the admin account
+az acr credential show --name "$REG" --query "passwords[0].value"
+# Prefer service principals (as shown below) for production scenarios
+
+# Log in with individual account of developer (for e.g. pushing containers using docker cli)
+az acr login --name "$REG"
+
+# Creating service principal for contribute to ACR
+if [ $(az ad sp list --display-name $SPCONTRIB | jq length) == '0' ]
+then
+    az ad sp create-for-rbac --name "$SPCONTRIB"
+fi
+# Get ID of service principal
+SPCONTRIBAPPID=$(az ad sp list --display-name "$SPCONTRIB" --query "[].appId" -o tsv)
+
+# Creating service principal for reading from ACR
+if [ $(az ad sp list --display-name $SPREAD | jq length) == '0' ]
+then
+    az ad sp create-for-rbac --name "$SPREAD"
+fi
+# Get ID of service principal
+SPREADAPPID=$(az ad sp list --display-name "$SPREAD" --query "[].appId" -o tsv)
+
+# Put service principal's password in Azure KeyVault (contributor)
+az keyvault secret set --vault-name $KV --name $SPCONTRIB \
+    --value $(az ad sp create-for-rbac --name "$SPCONTRIB" --query password -o tsv)
+
+# You could use the following command to delete the service principal:
+# az ad sp delete --id "$SPCONTRIBAPPID"
+
+# Check if ACRID is set
+if [ -z "$ACRID" ]
+then
+      >&2 echo "ACRID is not set!"
+fi
+
+# Put service principal's password in Azure KeyVault (reader)
+az keyvault secret set --vault-name $KV --name $SPREAD \
+    --value $(az ad sp create-for-rbac --name $SPREAD --scopes $ACRID --role reader --query password --output tsv)
+# az ad sp delete --id $(az ad sp list --display-name "$REG-pull" --query "[].appId" -o tsv)
+
+# You could use the following command to delete the service principal
+# az ad sp delete --id "$SPREADAPPID"
+
+# Assign service principal the "Contributor" role so it can push images
+if [ $(az role assignment list --assignee "$SPCONTRIBAPPID" --role Contributor --scope "$ACRID" | jq length) == '0' ]
+then
+    az role assignment create --assignee "$SPCONTRIBAPPID" --role Contributor --scope "$ACRID"
+fi
+
+# Assign service principal the "Reader" role so it can read images
+if [ $(az role assignment list --assignee "$SPREADAPPID" --role Reader --scope "$ACRID" | jq length) == '0' ]
+then
+    az role assignment create --assignee "$SPREADAPPID" --role Reader --scope "$ACRID"
+fi
+
+# Use usual "docker login" with service principal to authenticate at ACR
+docker login -u $SPCONTRIBAPPID \
+    -p $(az keyvault secret show --vault-name $KV --name $SPCONTRIB --query value -o tsv) \
+    $REG.azurecr.io

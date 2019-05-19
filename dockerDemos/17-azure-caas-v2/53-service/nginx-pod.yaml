@@ -1,0 +1,19 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: web
+  labels:
+    name: web
+    app: workshop
+spec:
+  containers:
+  - name: web
+    image: nginx:alpine
+    ports:
+      - containerPort: 80
+        name: http
+        protocol: TCP
+    resources:
+      limits:
+        memory: "64M"
+        cpu: "500m"

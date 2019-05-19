@@ -1,0 +1,20 @@
+cd ./56-aks-aci-scaleout
+
+# Create service account with cluster-admin role
+# (see https://helm.sh/docs/using_helm/#tiller-and-role-based-access-control)
+kubectl create -f rbac-config.yaml
+
+# Initialize helm
+helm init --service-account tiller --history-max 200 --upgrade
+
+# Install AKS ACI connector
+az aks install-connector --resource-group $RG --name $AKS --connector-name aciconnector
+# To delete: az aks remove-connector --resource-group $RG --name $AKS --connector-name aciconnector
+
+# Verify
+kubectl get pods -l "app=aciconnector-linux-westeurope-virtual-kubelet-for-aks"
+kubectl get nodes
+kubectl get pods
+
+kubectl apply -f deployment.yaml
+kubectl delete -f deployment.yaml

@@ -1,0 +1,19 @@
+# ACR best practices see https://docs.microsoft.com/en-us/azure/container-registry/container-registry-best-practices
+
+# Create Azure Container Registry if it does not exist yet
+if [ $(az acr check-name --name "$REG" --query nameAvailable) == 'true' ]
+then
+    # Use premium to enable geo-replication
+    az acr create --resource-group "$RG" --name "$REG" --location $LOCATION \
+        --sku "premium" --admin-enabled
+
+    # Replication ACR to second data center
+    az acr replication create --resource-group "$RG" --registry "$REG" \
+        --location $LOCATION2
+
+    # NOTE that ACR in Azure VNets is currently in preview, we will
+    #      not go into that in this demo. For details see
+    #      https://docs.microsoft.com/de-de/azure/container-registry/container-registry-vnet
+fi
+# Get ID of ACR
+ACRID=$(az acr show --name "$REG" --resource-group "$RG" --query "id" -o tsv)

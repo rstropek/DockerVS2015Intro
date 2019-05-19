@@ -1,0 +1,22 @@
+# Create Linux app service plan if it does not exist
+if output=$(az appservice plan show --resource-group "$RGL" --name "$LINUX_PLAN") && [ -z "$output" ]
+then
+    az appservice plan create --name "$LINUX_PLAN" --resource-group "$RGL" --sku b1 --is-linux
+fi
+
+if ! az webapp show --resource-group "$RGL" --name "$LINUX_WEB_APP"
+then
+    # Create webapp with dummy container
+    az webapp create --resource-group "$RGL" --plan "$LINUX_PLAN" --name "$LINUX_WEB_APP" \
+        --deployment-container-image-name nginx:alpine
+
+    # Configure correct container (from ACR)
+    az webapp config container set  --resource-group "$RGL" --name "$LINUX_WEB_APP" \
+        --docker-registry-server-url $REG.azurecr.io \
+        --docker-registry-server-user $SPREADAPPID \
+        --docker-registry-server-password $(az keyvault secret show --vault-name $KV --name $SPREAD --query value -o tsv) \
+        --docker-custom-image-name $REG.azurecr.io/$IMG 
+
+    # Enable CD
+    az webapp deployment container config --enable-cd true --resource-group "$RGL" --name "$LINUX_WEB_APP"
+fi

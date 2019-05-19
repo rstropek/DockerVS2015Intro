@@ -1,0 +1,13 @@
+cd ./52-simple-pod
+
+kubectl create -f nginx-pod.yaml
+kubectl get pods
+kubectl expose pod nginx-pod --type NodePort
+kubectl get services
+kubectl exec -it nginx-pod -- /bin/bash
+    apt-get update && apt-get install wget -y && wget -q -O - http://localhost
+
+kubectl delete service nginx-pod
+kubectl delete -f nginx-pod.yaml
+
+kubectl get all

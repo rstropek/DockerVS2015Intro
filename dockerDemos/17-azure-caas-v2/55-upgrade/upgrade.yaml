@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-web
+spec:
+  selector:
+    matchLabels:
+      app: demo-web
+  replicas: 5
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 30
+  template:
+    metadata:
+      labels:
+        app: demo-web
+    spec:
+      containers:
+      - name: demo-web
+        image: techorama19.azurecr.io/helloworldweb:v2
+        ports:
+          - containerPort: 80
+        env:
+          - name: PORT
+            value: "80"
+        resources:
+          limits:
+            memory: "64M"
+            cpu: "500m"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: demo-web-svc
+spec:
+  selector:
+    app: demo-web
+  ports:
+  - port: 80
+    targetPort: 80
+  type: NodePort
+

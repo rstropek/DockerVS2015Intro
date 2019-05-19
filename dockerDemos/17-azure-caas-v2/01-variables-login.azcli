@@ -1,0 +1,33 @@
+# Set some variables that we will use throughout this demo
+
+# SUBSCRIPTION="Your Azure Subscription Name"
+LOCATION="westeurope"
+LOCATION2="northeurope"
+RG="techorama19"
+RGL=$RG-linux
+REG=$RG
+SKU="premium"
+SPCONTRIB=$RG-sp-contrib
+SPREAD=$RG-sp-read
+PASSWD="P@ssw0rd123"
+WEB=$RG-web
+IMG="helloworldweb"
+IMGDEP=$IMG-dept
+EVENT_SITE=$RG-events
+LINUX_PLAN=$RG-lxplan
+LINUX_WEB_APP=$RG-lxweb
+APP_ENDPOINT="https://$EVENT_SITE.azurewebsites.net/api/updates"
+KV=$RG-vault
+AKS=$RG-aks
+# WHTARGET="https://your-webhook-target.could-be-logic-app.com"
+GHUSR="rstropek"
+# GHPAT="your-github-personal-access-token"
+GHREPO="https://github.com/rstropek/acr-image-refresh-demo"
+TASK="ghhelloworld"
+TASKDEP="dept-image"
+STORAGE=$RG-store
+STORAGESHARE="aksshare"
+
+# Log in and select correct account
+az login
+az account set --subscription "$SUBSCRIPTION"

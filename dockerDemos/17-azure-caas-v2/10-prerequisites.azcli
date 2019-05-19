@@ -1,0 +1,16 @@
+# Create resource group if it does not exist yet
+if [ $(az group exists --name "$RG") == 'false' ]
+then
+    az group create --name "$RG" --location "$LOCATION"
+fi
+if [ $(az group exists --name "$RGL") == 'false' ]
+then
+    az group create --name "$RGL" --location "$LOCATION"
+fi
+
+# Create Keyvault to store service principal's password
+if ! az keyvault show --resource-group "$RG" --name "$KV"
+then
+    az keyvault create --resource-group "$RG" --name "$KV"
+    # To delete: az keyvault delete --resource-group "$RG" --name "$KV"
+fi

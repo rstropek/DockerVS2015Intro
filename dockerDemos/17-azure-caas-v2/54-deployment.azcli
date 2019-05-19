@@ -1,0 +1,8 @@
+cd ./54-deployment
+
+kubectl apply -f .
+kubectl get pods
+
+# Change number of replicas and run “apply” again
+
+kubectl delete -f .

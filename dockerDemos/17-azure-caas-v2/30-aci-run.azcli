@@ -1,0 +1,23 @@
+# Register ACI provider if not already registered
+if [ $(az provider show --namespace Microsoft.ContainerInstance --query "registrationState" --output tsv) != "Registered" ]
+then
+    az provider register --namespace Microsoft.ContainerInstance
+fi
+
+# Start container from image in ACR if it does not already exist.
+# Note that we use ACI here. Other options would be App Service or AKS (Kubernetes)
+if ! az container show --resource-group "$RG" --name "$WEB"
+then
+    # Note how we get service principal data from Keyvault
+    az container create --resource-group "$RG" --name "$WEB" --image $REG.azurecr.io/$IMG \
+        --cpu 1 --memory 1 --ip-address public --ports 80 \
+        --registry-login-server $REG.azurecr.io \
+        --registry-username $SPREADAPPID \
+        --registry-password $(az keyvault secret show --vault-name $KV --name $SPREAD --query value -o tsv)
+
+    # You could use the following statement to see logs
+    # az container attach --resource-group "$RG" --name "$WEB"
+
+    # You could use the following statement to delete the container
+    # az container delete --resource-group "$RG" --name "$WEB" --yes
+fi

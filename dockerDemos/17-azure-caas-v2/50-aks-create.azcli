@@ -1,0 +1,31 @@
+# Register Kubernetes provider if not already registered
+if [ $(az provider show --namespace Microsoft.ContainerService --query "registrationState" --output tsv) != "Registered" ]
+then
+    az provider register --namespace Microsoft.ContainerService
+fi
+
+# Create Kubernetes cluster
+if ! az aks show --resource-group "$RG" --name "$AKS"
+then
+    # Note SP in the following create statement. Specifies the SP used by AKS for Azure API calls.
+    az aks create --resource-group "$RG" --name "$AKS" --node-count 3 --generate-ssh-keys \
+        --location $LOCATION --enable-addons monitoring --kubernetes-version 1.12.7 \
+        --client-secret $(az keyvault secret show --vault-name $KV --name $SPREAD --query value -o tsv) \
+        --service-principal $SPREADAPPID
+fi
+
+# Connect kubectl with AKS
+az aks get-credentials --resource-group "$RG" --name "$AKS"
+
+# Get information about cluster
+kubectl cluster-info
+kubectl get nodes
+kubectl describe nodes
+
+# Check whats running on cluster
+kubectl get all
+kubectl get pods
+
+# kubectl configuration
+kubectl config get-contexts
+kubectl config set-context $AKS

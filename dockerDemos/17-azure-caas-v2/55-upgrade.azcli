@@ -1,0 +1,18 @@
+cd ./55-upgrade
+
+kubectl apply -f .
+kubectl get pods
+kubectl describe deployment demo-web
+
+# Set image of deployment container
+kubectl set image deployment/demo-web demo-web=techorama19.azurecr.io/helloworldweb:latest
+
+# Monitor rollout status
+kubectl rollout status deployment/demo-web
+
+# Manage rollout history
+kubectl rollout history deployment demo-web
+kubectl rollout history deployment demo-web --revision=2
+kubectl rollout undo deployment demo-web
+
+kubectl delete -f .

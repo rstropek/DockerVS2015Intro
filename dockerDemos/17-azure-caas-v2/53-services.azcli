@@ -1,0 +1,10 @@
+cd ./53-service
+
+kubectl apply -f .
+kubectl get services
+kubectl get pods
+kubectl delete -f .
+
+# Change service type to LoadBalancer and try again
+
+kubectl get service web-svc --watch

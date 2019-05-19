@@ -1,0 +1,46 @@
+# Demo demo website that displays events happening in EventGrid
+if output=$(az appservice plan show --resource-group "$RG" --name "$EVENT_SITE-plan") && [ -z "$output" ]
+then
+    az group deployment create --resource-group "$RG" \
+        --template-uri "https://raw.githubusercontent.com/Azure-Samples/azure-event-grid-viewer/master/azuredeploy.json" \
+        --parameters siteName=$EVENT_SITE hostingPlanName=$EVENT_SITE-plan
+fi
+
+# Register EventGrid provider if not already registered
+if [ $(az provider show --namespace Microsoft.EventGrid --query "registrationState" --output tsv) != "Registered" ]
+then
+    az provider register --namespace Microsoft.EventGrid
+fi
+
+# Add EventGrid subscription if not already exists
+if ! az eventgrid event-subscription show --name event-sub-acr --source-resource-id $ACRID
+then
+    az eventgrid event-subscription create --name event-sub-acr --source-resource-id $ACRID --endpoint $APP_ENDPOINT
+    # az eventgrid event-subscription delete --name event-sub-acr --resource-id $ACRID
+fi
+
+# Create a webhook so we get notified about container pushes
+if ! az acr webhook show --registry "$REG" --name "webhook1$REG"
+then
+    az acr webhook create --registry "$REG" --name "webhook1$REG" --actions push --uri $WHTARGET
+
+    # After creating the webhook, trigger a push and see how the webhook is triggered
+fi
+
+# Create a task that listens to change in GitHub and rebuilds images if necessary
+if ! az acr task show --registry "$REG" --name "$TASK"
+then
+    az acr task create --registry "$REG" --name "$TASK" --image $TASK \
+        --context $GHREPO --branch master --file Dockerfile --git-access-token $GHPAT
+    # To delete: az acr task delete --registry "$REG" --name "$TASK"
+fi
+
+# Use the following command to manually trigger the task
+az acr task run --registry "$REG" --name "$TASK"
+
+# Use the following command to see a list of task runs
+az acr task list-runs --registry "$REG" --output table
+
+# Create new version of base image ($REG.azurecr.io/$IMG) and watch auth-refresh
+
+# Speak about multi-step tasks

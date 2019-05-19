@@ -1,0 +1,32 @@
+# Create deployment
+kubectl run nginx --image=nginx:alpine --port=80
+kubectl get deployments
+kubectl get pods
+
+# Scale
+kubectl scale deployment nginx --replicas=3
+
+# Work with deployment’s labels
+kubectl describe deployment nginx
+kubectl label deployment nginx env=testing
+kubectl describe deployment nginx
+kubectl get deployment -l env=testing -o yaml
+
+# Create service
+kubectl expose deployment nginx --type=NodePort
+kubectl get services
+kubectl get nodes -o=wide
+kubectl run -it shell --image debian
+# curl http://...(ip from get nodes):...(port from get services)
+kubectl delete deployment shell
+
+# Try Kubernetes Dashboard
+# Create cluster role binding for service account (only for testing,
+# see also https://docs.microsoft.com/en-us/azure/aks/kubernetes-dashboard#start-the-kubernetes-dashboard)
+kubectl create clusterrolebinding kubernetes-dashboard --clusterrole=cluster-admin --serviceaccount=kube-system:kubernetes-dashboard
+az aks browse --resource-group $RG --name $AKS
+# Open http://localhost:8001 for Dashboard
+
+# Delete deployment and service
+kubectl delete deployment nginx
+kubectl delete service nginx
