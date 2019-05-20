@@ -4,6 +4,8 @@ then
     az provider register --namespace Microsoft.ContainerService
 fi
 
+cd ./50-aks-create
+
 # Create Kubernetes cluster
 if ! az aks show --resource-group "$RG" --name "$AKS"
 then
@@ -15,7 +17,18 @@ then
 fi
 
 # Connect kubectl with AKS
-az aks get-credentials --resource-group "$RG" --name "$AKS"
+az aks get-credentials --resource-group "$RG" --name "$AKS" --overwrite-existing
+    
+# Create service account with cluster-admin role
+# (see https://helm.sh/docs/using_helm/#tiller-and-role-based-access-control)
+kubectl create -f rbac-config.yaml
+# To delete:
+# kubectl delete serviceaccount -n kube-system tiller
+# kubectl delete clusterrolebinding/tiller
+
+# Initialize helm
+helm init --service-account tiller --upgrade
+# To delete: kubectl -n kube-system delete deployment tiller-deploy
 
 # Get information about cluster
 kubectl cluster-info

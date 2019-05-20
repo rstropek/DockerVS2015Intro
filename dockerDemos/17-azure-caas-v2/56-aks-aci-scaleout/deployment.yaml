@@ -17,10 +17,6 @@ spec:
         image: nginx:alpine
         ports:
         - containerPort: 80
-        resources:
-          limits:
-            memory: "64M"
-            cpu: "500m"
       nodeSelector:
         beta.kubernetes.io/os: linux
         kubernetes.io/role: agent

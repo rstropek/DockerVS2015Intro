@@ -1,3 +1,5 @@
+cd ./57-ingress-controller
+
 # Create a namespace for your ingress resources
 kubectl create namespace ingress-basic
 
@@ -7,4 +9,5 @@ helm install stable/nginx-ingress \
     --set controller.replicaCount=2 \
     --set nodeSelector."beta.kubernetes.io/os"=linux
 
-kubectl get all
+kubectl get service -l app=nginx-ingress --namespace ingress-basic
+
