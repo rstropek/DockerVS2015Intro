@@ -25,6 +25,8 @@
   * Note that you can use the Postgres' container name *pg-db* as the connection's server name because DNS works inside our new network.
   * The default user is *postgres*. The default database is *postgres*.
 
+![Connection](pg-connect.png)
+
 ## Access Database With CLI
 
 * Start an interactive container in your network: `docker run -it --rm --net pg-net --name pg-cli postgres /bin/bash`
@@ -42,3 +44,37 @@ SELECT * FROM MyTab;
 ## Cleanup
 
 * Use proper `docker ps` and `docker rm` command to stop and remove all Postgres-related containers.
+
+## Using Docker Compose to Simplify Setup
+
+**Note** that you might need to install *Docker Compose* for this exercise. Try running `docker-compose`. If it is not installed, following [these install instructions](https://docs.docker.com/compose/install/#install-compose).
+
+* Create an empty folder
+* Create a file *docker-compose.yml* in this folder.
+* Copy the following code in the file:
+
+```yml
+version: "3.8"
+  services:
+    pg-db:
+      image: postgres
+      environment:
+        POSTGRES_PASSWORD: secret
+
+    pg-admin:
+      image: dpage/pgadmin4
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@demo.com
+        PGADMIN_DEFAULT_PASSWORD: secret
+        PGADMIN_LISTEN_PORT: 80
+      ports:
+        - "8080:80"
+      links:
+      - "pg-db:pg-db"
+```
+
+* Try to understand the structure of the compose file. Compare it to the `docker run` commands you issues before.
+* Start the entire Postgres infrastructure with a single command: `docker-compose up`
+* Open Postgres Admin UI on `http://localhost:8080`
+* Stop everything with *Ctrl+c*
+* Remove everything: `docker-compose rm`
