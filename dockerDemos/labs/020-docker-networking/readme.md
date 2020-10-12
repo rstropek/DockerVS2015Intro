@@ -55,22 +55,22 @@ SELECT * FROM MyTab;
 
 ```yml
 version: "3.8"
-  services:
-    pg-db:
-      image: postgres
-      environment:
-        POSTGRES_PASSWORD: secret
+services:
+  pg-db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: secret
 
-    pg-admin:
-      image: dpage/pgadmin4
-      environment:
-        PGADMIN_DEFAULT_EMAIL: admin@demo.com
-        PGADMIN_DEFAULT_PASSWORD: secret
-        PGADMIN_LISTEN_PORT: 80
-      ports:
-        - "8080:80"
-      links:
-      - "pg-db:pg-db"
+  pg-admin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@demo.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8080:80"
+    links:
+    - "pg-db:pg-db"
 ```
 
 * Try to understand the structure of the compose file. Compare it to the `docker run` commands you issues before.
