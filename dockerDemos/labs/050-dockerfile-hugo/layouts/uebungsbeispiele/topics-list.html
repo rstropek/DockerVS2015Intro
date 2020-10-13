@@ -1,0 +1,24 @@
+{{ define "main" }}
+<div class="mt-5"></div>
+
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-3">
+        {{ range sort .Pages "Params.Level" "asc" }}
+        <div class="col mb-4">
+            <div class="card h-100">
+                {{ if isset .Params "img" }}
+                <img src="/img/uebungsbeispiele/{{.Params.img}}" class="card-img-top mx-auto" alt="{{.Title}}" style="object-fit: contain; max-height: 100px; text-align: center;margin-top: 20px;">
+                {{ end }}
+
+                <div class="card-body">
+                    <h5 class="card-title">{{.Title}}</h5>
+                    <p class="card-text">{{.Description}}</p>
+                </div>
+                
+                <div class="card-footer"><a href="{{.Permalink}}" class="card-link">Zu den Anleitungen</a></div>
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

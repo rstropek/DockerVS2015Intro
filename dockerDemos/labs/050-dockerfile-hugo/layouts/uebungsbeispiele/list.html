@@ -1,0 +1,31 @@
+{{ define "main" }}
+<div class="mt-5"></div>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>{{ .Title }}
+                {{ if isset .Params "img" }}
+                <img src="/img/uebungsbeispiele/{{.Params.img}}" alt="{{.Title}}" style="object-fit: contain; max-height: 40px; vertical-align: baseline; margin-left: 10px;">
+                {{ end }}
+            </h1>
+            <div class="mt-5"></div>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3">
+        {{ range (.Pages.ByParam "Title").ByParam "Level" }}
+        <div class="col mb-4">
+            <div class="card h-100">
+                <div class="card-header"><span class="badge badge-pill {{ cond (eq .Params.Level 1) "badge-primary" (cond (eq .Params.Level 2) "badge-success" "badge-danger") }}">Level {{.Params.Level}}</span></div>
+                <div class="card-body">
+                    <h5 class="card-title">{{.Title}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{.Date.Format "02.01.2006"}}</h6>
+                    <p class="card-text">{{.Description}}</p>
+                </div>
+                <div class="card-footer"><a href="{{.Permalink}}" class="card-link">Zur Anleitung</a></div>
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

@@ -1,0 +1,30 @@
+{{ define "main" }}
+<div class="mt-5"></div>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {{ .Content }}
+        </div>
+    </div>
+
+    {{ $termine := getJSON "https://cdw-planner.azurewebsites.net/api/events?past=false" }}
+
+    <table class="table">
+        <tr>
+            <th>Datum</th>
+            <th>Beschreibung</th>
+        </tr>
+        {{ range $termine }}
+        <tr>
+            <td>
+                {{ dateFormat "02. Jan 2006" .date }}
+            </td>
+            <td>
+                {{ .location }}
+            </td>
+        </tr>
+        {{ end }}
+    </table>
+</div>
+{{ end }}

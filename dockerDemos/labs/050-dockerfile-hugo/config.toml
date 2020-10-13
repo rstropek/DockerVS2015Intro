@@ -1,0 +1,4 @@
+baseURL = "http://localhost:8080/"
+languageCode = "en-us"
+title = "My New Hugo Site"
+disableKinds = ["taxonomy", "taxonomyTerm"]

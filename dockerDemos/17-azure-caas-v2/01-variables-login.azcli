@@ -3,7 +3,7 @@
 # SUBSCRIPTION="Your Azure Subscription Name"
 LOCATION="westeurope"
 LOCATION2="northeurope"
-RG="techorama19"
+RG="azurebasics"
 RGL=$RG-linux
 REG=$RG
 SKU="premium"
@@ -29,5 +29,5 @@ STORAGE=$RG-store
 STORAGESHARE="aksshare"
 
 # Log in and select correct account
-az login
+az login --use-device-code
 az account set --subscription "$SUBSCRIPTION"
