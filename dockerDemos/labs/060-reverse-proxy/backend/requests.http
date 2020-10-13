@@ -1,0 +1,21 @@
+# Abfragen aller Gerichte
+GET http://localhost:8080/meals
+
+###
+# Abfrage aller Bestellungen
+GET http://localhost:8080/lunchOrders
+
+###
+# Abfrage aller Bestellungen einer Person
+GET http://localhost:8080/lunchOrders?person=Tom
+
+###
+# Einfügen einer Bestellung
+POST http://localhost:8080/lunchOrders
+
+{
+    "day": 0,
+    "person": "Max",
+    "mealId": 1,
+    "notes": "Besonders viel"
+}

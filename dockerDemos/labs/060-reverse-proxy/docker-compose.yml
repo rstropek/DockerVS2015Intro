@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8081:80"
+    networks:
+      - mynet
+  frontend:
+    build: ./frontend
+    networks:
+      - mynet
+  proxy:
+    build: ./proxy
+    networks:
+      - mynet
+    ports:
+      - "8080:80"
+networks:
+  mynet:
+    driver: bridge
