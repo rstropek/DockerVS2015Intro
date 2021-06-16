@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - host: student.cloud.htl-leonding.ac.at
+    http:
+      paths:
+      - path: /r.stropek(/|$)(.*)$
+        pathType: Prefix
+        backend:
+          service:
+            name: web-svc
+            port:
+              number: 8080
