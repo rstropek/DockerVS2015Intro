@@ -1,0 +1,19 @@
+@host = http://localhost:1337
+
+###
+GET {{host}}/customers
+Accept: application/json
+
+###
+POST {{host}}/customers
+Content-Type: application/json
+Accept: application/json
+
+{
+    "firstName": "Foo",
+    "lastName": "Baz"
+}
+
+###
+GET {{host}}/customers/1
+Accept: application/json

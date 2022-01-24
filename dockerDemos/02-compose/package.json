@@ -9,6 +9,6 @@
   "author": "Rainer Stropek",
   "license": "MIT",
   "dependencies": {
-    "needle": "^1.0.0"
+    "axios": "^0.25.0"
   }
 }

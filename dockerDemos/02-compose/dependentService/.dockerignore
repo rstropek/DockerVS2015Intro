@@ -1,0 +1,5 @@
+node_modules
+requests.http
+Dockerfile
+docker-compose.yml
+readme.md
