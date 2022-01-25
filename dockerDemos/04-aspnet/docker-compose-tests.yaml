@@ -1,0 +1,19 @@
+services:
+  test:
+    build:
+      context: .
+      target: test
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ShareForFutureTest;User=sa;Password=P@ssw0rd!123
+    depends_on:
+      - db
+    links:
+      - db
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssw0rd!123
+      - MSSQL_PID=Express
+volumes:
+  logvolume01: {}
