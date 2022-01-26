@@ -32,12 +32,12 @@ This sample demonstrates the use of Azure Files-based volumes. It uses a postgre
 
 1. Create volume container
     ```
-        docker create -v /dbdata --name dbstore ubuntu /bin/true
+        docker volume create dbstore
     ```
 
 1. Run postgres DB on Azure Files-based volume
     ```
-        docker run --name mydb -e POSTGRES_PASSWORD=P@ssw0rd! -e PGDATA=/dbdata --volumes-from dbstore -d -p 5432:5432 postgres
+        docker run --name mydb -e POSTGRES_PASSWORD=P@ssw0rd! -e PGDATA=/dbdata -v dbstore:/dbdata -d -p 5432:5432 postgres
     ```
 
 2. Run postgres client with link to DB (same statement as shown above)
@@ -55,20 +55,3 @@ This sample demonstrates the use of Azure Files-based volumes. It uses a postgre
         SELECT * FROM Customer;
         \q
     ```
-
-## Use Azure Files-based volume for backup
-
-Note that you have to install the [Azure Files Driver for Docker Volumes](https://github.com/Azure/azurefile-dockervolumedriver/tree/master/contrib/init/systemd)
-for this sample.
-
-1. Create Azure Files-based volume
-    ```
-        docker volume create -d azurefile --name dbdatavol -o share=dbdatavol
-    ```
-
-2. Create backup in seperate container
-    ```
-        docker run --rm --volumes-from dbstore -v dbdatavol:/backup ubuntu tar cvf /backup/backup.tar /dbdata
-    ```
-
-3. Open Azure portal and look for backup file in Azure Files
