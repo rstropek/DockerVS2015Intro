@@ -1,14 +1,17 @@
 services:
-  test:
+  run:
     build:
       context: .
-      target: test
+      target: run
     environment:
-      - ConnectionStrings__DefaultConnection=Server=db;Database=ShareForFutureTest;User=sa;Password=P@ssw0rd!123
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ShareForFuture;User=sa;Password=P@ssw0rd!123
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
     depends_on:
       - db
     links:
       - db
+    ports:
+      - 8081:80
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:

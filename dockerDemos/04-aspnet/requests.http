@@ -1,0 +1,7 @@
+@host = http://localhost:8081
+
+###
+GET {{host}}/api/users
+
+###
+POST {{host}}/api/users/create-demo
