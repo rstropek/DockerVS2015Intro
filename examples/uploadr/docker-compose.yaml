@@ -1,0 +1,48 @@
+services:
+  uploader:
+    image: mcr.microsoft.com/dotnet/aspnet:8.0
+    volumes:
+      - ./out/Uploader.Api:/app
+      - uploader-files:/app/uploads
+    working_dir: /app
+    environment:
+      - UploadSettings__TargetFolder=/app/uploads
+    ports:
+      - 8080:8080
+    networks:
+      - uploader-net
+    command: ./Uploader.Api
+
+  processor:
+    image: mcr.microsoft.com/dotnet/runtime:8.0
+    volumes:
+      - ./out/Uploader.Processor:/app
+      - uploader-files:/app/uploads
+    working_dir: /app
+    environment:
+      - UploadSettings__TargetFolder=/app/uploads
+    networks:
+      - uploader-net
+    command: ./Uploader.Processor
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:latest
+    volumes:
+      - database-files:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=mySecre1~8assw0rd
+      - MSSQL_PID=Express
+    ports:
+      - 1433:1433
+    networks:
+      - uploader-net
+
+networks:
+  uploader-net:
+
+volumes:
+  uploader-files:
+  database-files:

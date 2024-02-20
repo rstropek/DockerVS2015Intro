@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>File Upload</title>
+  </head>
+  <body>
+    <h1>File Upload</h1>
+
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()">Upload File</button>
+
+    <script>
+      async function uploadFile() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+
+        if (!file) {
+          alert("Please select a file.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          const response = await fetch("http://localhost:8080/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (response.ok) {
+            const result = await response.text();
+            alert(result);
+          } else {
+            alert("Upload failed.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Error uploading file.");
+        }
+      }
+    </script>
+  </body>
+</html>

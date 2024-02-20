@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Api", "Uploader.Api\Uploader.Api.csproj", "{573E9E58-CCFD-455E-A982-CEDF787C006F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uploader.Processor", "Uploader.Processor\Uploader.Processor.csproj", "{15B22A0F-C258-46DD-8A55-1B55E9B9EC21}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{573E9E58-CCFD-455E-A982-CEDF787C006F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{573E9E58-CCFD-455E-A982-CEDF787C006F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{573E9E58-CCFD-455E-A982-CEDF787C006F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{573E9E58-CCFD-455E-A982-CEDF787C006F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15B22A0F-C258-46DD-8A55-1B55E9B9EC21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15B22A0F-C258-46DD-8A55-1B55E9B9EC21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15B22A0F-C258-46DD-8A55-1B55E9B9EC21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15B22A0F-C258-46DD-8A55-1B55E9B9EC21}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
